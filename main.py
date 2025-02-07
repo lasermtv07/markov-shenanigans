@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 import math
 import random
+import json
 
 #an excerpt from collection of lovecrafitan horror
 FILE='text.txt'
-COUNT=2
+COUNT=1
 LEN=420
 
 #class
@@ -35,6 +36,11 @@ class state:
             weights.append(i[0])
             states.append(i[1])
         return random.choices(states,weights=weights,k=1)[0]
+    def dictionarify(self):
+        o=[]
+        for i in self.states:
+            o.append({'key':i[1],'probability':i[0]})
+        return {'key':self.key,'data':o}
 
 #open and preprocess file
 with open(FILE,'r') as i:
@@ -67,10 +73,14 @@ while(i<len(f)-COUNT-1):
         a=state(tok)
         a.addState(nxt)
         space.append(a)
-
+    print(tok)
+dSpace=[]
 for i in space:
     i.markovify()
-
+    dSpace.append(i.dictionarify())
+s=open("data.json","w")
+s.write(json.dumps(dSpace))
+s.close()
 #generate
 r=random.choice(space)
 l=1
@@ -84,6 +94,7 @@ while(l<LEN):
     l+=1
 
 #final processing
+'''
 o=o.replace(" , ",", ")
 o=o.split(" . ")
 for i in range(len(o)):
@@ -92,3 +103,4 @@ for i in range(len(o)):
     o[i]="".join(t)
 o=". ".join(o)
 print(o)
+'''
